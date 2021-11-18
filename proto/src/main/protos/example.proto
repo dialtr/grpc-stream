@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.example.proto";
+option java_outer_classname = "ExampleProtos";
+
+package proto;
+
+message Request {
+  string query = 1;
+}
+
+message Response {
+  string data = 1;
+}
+
+service Example {
+  rpc Fetch(Request) returns (stream Response) {}
+}

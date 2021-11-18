@@ -1,0 +1,22 @@
+# We don't want user-specific IDE/project settings in the repo.
+.idea/
+*.iml
+.settings/
+bin/
+.classpath
+.project
+
+# Ignore output files (jars, etc.)
+target/
+
+# Ignore VIM editor files
+*~
+.*~
+
+# Ignore any generated Javadoc.
+doc/javadoc/
+
+# Ignore log files
+log/*.log
+
+
