@@ -21,6 +21,10 @@ public class Application {
     @Parameter(names = {"--query", "-q"}, description = "Query string", required = false)
     public String queryString = "naive";
 
+    // Verbose indicates whether we should print the response to the console.
+    @Parameter(names = {"--verbose", "-v"}, description = "Verbose", required = false)
+    public boolean verbose = false;
+
     public static void main(String[] args) {
         final Application application = new Application();
         JCommander.newBuilder()
@@ -44,14 +48,16 @@ public class Application {
                     .setQuery(queryString)
                     .build();
 
-            Iterator<Response> tuples = blockingStub.fetch(request);
-            while (tuples.hasNext()) {
-                final Response tuple  = tuples.next();
-                // Actually printing the data to the console; will slow down
+            Iterator<Response> responseStream = blockingStub.fetch(request);
+            while (responseStream.hasNext()) {
+                final Response block  = responseStream.next();
+                // Maybe print the data to the console; will slow down
                 // network reads since we're using the blocking stop, which
                 // will help demonstrate the problem, even when running on the
                 // localhost.
-                System.out.println(tuple);
+                if (verbose) {
+                    System.out.println(block.getData());
+                }
             }
         } catch (StatusRuntimeException e) {
             System.out.println(e.getMessage());
