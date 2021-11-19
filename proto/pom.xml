@@ -7,15 +7,17 @@
         <groupId>org.example</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.sevensixes.unifi.proto</groupId>
+    <groupId>org.example.proto</groupId>
     <artifactId>proto</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
+
     <build>
         <plugins>
             <plugin>
