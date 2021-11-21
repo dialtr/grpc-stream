@@ -2,11 +2,11 @@ package org.example.server;
 
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.example.proto.ExampleGrpc;
 import org.example.proto.Request;
 import org.example.proto.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
@@ -22,7 +22,7 @@ public class Service extends ExampleGrpc.ExampleImplBase {
     // the server side.
     private static int BLOCK_COUNT = 8 * 1024;
 
-    private static Logger logger = LoggerFactory.getLogger(Service.class);
+    private static Logger logger = LogManager.getLogger(Service.class);
 
     // Make a random string containing 'charCount' uppercase letters.
     private static String makeRandomString(int charCount) {
