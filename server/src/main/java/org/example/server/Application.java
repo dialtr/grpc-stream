@@ -1,19 +1,18 @@
 package org.example.server;
 
-import java.util.logging.Logger;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Application {
     private static int SHUTDOWN_TIMEOUT_TIME_SECONDS = 30;
 
-    private static final Logger logger =
-            Logger.getLogger(Application.class.getName());
+    private static final Logger logger = LogManager.getLogger(Application.class);
 
     @Parameter(names = {"--port", "-p"}, description = "Port number", required = true)
     public int port = 7171;
