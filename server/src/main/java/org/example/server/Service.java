@@ -20,7 +20,7 @@ public class Service extends ExampleGrpc.ExampleImplBase {
     // Number of blocks to send. This is also large on purpose so that
     // we can demonstrate how sending too much can cause buffering on
     // the server side.
-    private static int BLOCK_COUNT = 8 * 1024;
+    private static int BLOCK_COUNT = 1024;
 
     private static Logger logger = LogManager.getLogger(Service.class);
 
