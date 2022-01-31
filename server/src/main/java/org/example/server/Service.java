@@ -15,7 +15,7 @@ public class Service extends ExampleGrpc.ExampleImplBase {
     // want to demonstrate that sending data faster than the client is
     // able to consume it will cause data to buffer in the server and
     // in turn, cause memory problems.
-    private static int BLOCK_SIZE = 1024 * 1024;
+    private static int BLOCK_SIZE = 1024;
 
     // Number of blocks to send. This is also large on purpose so that
     // we can demonstrate how sending too much can cause buffering on
