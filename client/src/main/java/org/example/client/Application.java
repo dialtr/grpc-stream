@@ -33,6 +33,9 @@ public class Application {
     @Parameter(names = {"--verbose", "-v"}, description = "Verbose", required = false)
     public boolean verbose = false;
 
+    @Parameter(names = {"--threads", "-t"}, description = "Client thread count", required = false)
+    public int threads = 1;
+
     public static void main(String[] args) {
         final Application application = new Application();
 
@@ -67,23 +70,30 @@ public class Application {
 
     public void start() {
         final String target = host + ":" + port;
-        ManagedChannel channel =
+        final ManagedChannel channel =
                 ManagedChannelBuilder
                         .forTarget(target)
                         .usePlaintext()
                         .build();
+
         final ExampleGrpc.ExampleBlockingStub blockingStub =
                 ExampleGrpc.newBlockingStub(channel);
-        try {
-            for (int i = 0; i < count; ++i) {
-                System.out.println("Starting request " + i);
-                makeRequest(blockingStub);
-                System.out.println("Completed request " + i);
-            }
-        } catch (StatusRuntimeException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            System.out.println("Request failed!");
+
+        for (int i = 0; i < threads; ++i) {
+            final int thread_id = i;
+            new Thread(() -> {
+                try {
+                    for (int j = 0; j < count; ++j) {
+                        System.out.println("Thread " + thread_id + ", Starting request " + j);
+                        makeRequest(blockingStub);
+                        System.out.println("Thread " + thread_id + ", Completed request " + j);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                    System.out.println("Request failed!");
+                }
+            }).start();
         }
     }
 }

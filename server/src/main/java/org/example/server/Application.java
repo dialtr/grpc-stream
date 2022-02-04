@@ -6,6 +6,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import io.grpc.netty.NettyServerBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,8 +33,16 @@ public class Application {
     }
 
     void start() throws Exception {
-        server = ServerBuilder.forPort(port)
-                .addService(new Service())
+        final ServerBuilder serverBuilder = ServerBuilder.forPort(port);
+        if (serverBuilder instanceof NettyServerBuilder) {
+            NettyServerBuilder nettyServerBuilder = (NettyServerBuilder) serverBuilder;
+            nettyServerBuilder.keepAliveTime(30, TimeUnit.SECONDS)
+                    .keepAliveTimeout(5, TimeUnit.SECONDS)
+                    .permitKeepAliveWithoutCalls(true);
+            System.out.println("is netty server builder");
+        }
+
+        server = serverBuilder.addService(new Service())
                 .build()
                 .start();
 
