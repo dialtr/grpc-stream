@@ -6,6 +6,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import io.grpc.netty.NettyServerBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,6 +17,22 @@ public class Application {
 
     @Parameter(names = {"--port", "-p"}, description = "Port number", required = true)
     public int port = 7171;
+
+    @Parameter(names = {"--use-custom-keepalive-settings"},
+            description = "Use custom keepalive settings", required = false)
+    public boolean useCustomKeepAliveSettings = false;
+
+    @Parameter(names = {"--keepalive-time"},
+            description = "Delay time for next keepalive", required = false)
+    public int keepAliveTime = 30;
+
+    @Parameter(names = {"--keepalive-timeout"},
+            description = "Timeout for keepalive pings", required = false)
+    public int keepAliveTimeOut = 5;
+
+    @Parameter(names = {"--permit-keepalive-without-calls"},
+    description = "Permit client keepalives without calls", required = false)
+    public boolean permitKeepaliveWithoutCalls = false;
 
     private Server server;
 
@@ -31,13 +48,31 @@ public class Application {
         application.start();
     }
 
-    void start() throws Exception {
-        server = ServerBuilder.forPort(port)
-                .addService(new Service())
-                .build()
-                .start();
+    void configureNetty(ServerBuilder serverBuilder) {
+        if (!(serverBuilder instanceof  NettyServerBuilder)) {
+            System.out.println("Error: ServerBuilder not a NettyServerBuilder." +
+            "Can't configure custom settings.");
+            return;
+        }
 
-        logger.info("Server started, listening on port " + port);
+        if (!useCustomKeepAliveSettings) {
+            System.out.println("Using custom netty keepalive settings");
+            return;
+        } else {
+            System.out.println("Using custom netty keepalive settings");
+        }
+
+        NettyServerBuilder nettyServerBuilder = (NettyServerBuilder) serverBuilder;
+        nettyServerBuilder
+                .keepAliveTime(keepAliveTime, TimeUnit.SECONDS)
+                .keepAliveTimeout(keepAliveTimeOut, TimeUnit.SECONDS)
+                .permitKeepAliveWithoutCalls(permitKeepaliveWithoutCalls);
+    }
+
+    void start() throws Exception {
+        final ServerBuilder serverBuilder = ServerBuilder.forPort(port);
+
+        configureNetty(serverBuilder);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
